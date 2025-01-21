@@ -1,18 +1,19 @@
 import yfinance as yf
 
+NOT_AVAILABLE = 'N/A'
 
-def get_ticker_info(event):
-	ticker = event.input.value.strip().upper()
-	event.input.remove()
+def get_ticker_info(ticker):
+	# ticker = event.input.value.strip().upper()
+	# event.input.remove()
 	try:
 		stock = yf.Ticker(ticker)
 		info = stock.info
 		stock_info = (
-			f"Ticker: {info.get('symbol', 'N/A')}\n"
-			f"Name: {info.get('shortName', 'N/A')}\n"
+			f"Ticker: {info.get('symbol', NOT_AVAILABLE)}\n"
+			f"Name: {info.get('shortName', NOT_AVAILABLE)}\n"
 			f"Current Price: {info.get('regularMarketPrice', 'Market Closed')}\n"
-			f"Market Cap: {format_number(info.get('marketCap', 'N/A'))}\n"
-			f"52-Week Range: {info.get('fiftyTwoWeekLow', 'N/A')} - {info.get('fiftyTwoWeekHigh', 'N/A')}"
+			f"Market Cap: {format_number(info.get('marketCap', NOT_AVAILABLE))}\n"
+			f"52-Week Range: {info.get('fiftyTwoWeekLow', NOT_AVAILABLE)} - {info.get('fiftyTwoWeekHigh', NOT_AVAILABLE)}"
 		)
 	except Exception as e:
 		stock_info = f"Error fetching data for '{ticker}': {str(e)}"
@@ -20,6 +21,9 @@ def get_ticker_info(event):
 	return stock_info
 
 def format_number(number: int):
+	if number == NOT_AVAILABLE:
+		return number 
+
 	if number >= 1000000000000:
 		return str((number // 10000000000) / 100) + " t"
 	elif number >= 1000000000:		
